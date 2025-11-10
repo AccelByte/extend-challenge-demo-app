@@ -30,7 +30,8 @@ git clone https://github.com/AccelByte/extend-challenge-demo-app.git
 cd extend-challenge-demo-app
 
 # Build
-go build -o challenge-demo main.go
+mkdir -p bin
+go build -o bin/challenge-demo ./cmd/challenge-demo
 
 # Or run directly
 go run main.go
@@ -40,34 +41,34 @@ go run main.go
 
 **List all challenges**:
 ```bash
-./challenge-demo challenges list
+./bin/challenge-demo challenges list
 ```
 
 **Get specific challenge**:
 ```bash
-./challenge-demo challenges get daily-quests
+./bin/challenge-demo challenges get daily-quests
 ```
 
 **Trigger login event**:
 ```bash
-./challenge-demo events trigger login
+./bin/challenge-demo events trigger login
 ```
 
 **Trigger statistic event**:
 ```bash
-./challenge-demo events trigger stat --stat-code=match_wins --value=5
+./bin/challenge-demo events trigger stat --stat-code=match_wins --value=5
 ```
 
 **Claim reward**:
 ```bash
-./challenge-demo challenges claim daily-quests daily-login
+./bin/challenge-demo challenges claim daily-quests daily-login
 ```
 
 **Launch TUI mode**:
 ```bash
-./challenge-demo
+./bin/challenge-demo
 # Or explicitly:
-./challenge-demo tui
+./bin/challenge-demo tui
 ```
 
 ---
@@ -146,7 +147,7 @@ challenge-demo version
 Launch interactive terminal UI:
 
 ```bash
-./challenge-demo
+./bin/challenge-demo
 ```
 
 **Controls**:
