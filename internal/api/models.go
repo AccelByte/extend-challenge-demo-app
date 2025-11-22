@@ -30,6 +30,7 @@ type Goal struct {
 	Locked      bool   `json:"locked"`      // Whether goal is locked by prerequisites
 	CompletedAt string `json:"completedAt"` // RFC3339 timestamp or empty string (camelCase)
 	ClaimedAt   string `json:"claimedAt"`   // RFC3339 timestamp or empty string (camelCase)
+	IsActive    bool   `json:"isActive"`    // Whether goal is currently active (M3/M4 feature)
 }
 
 // Requirement specifies what is needed to complete a goal
@@ -109,4 +110,33 @@ type ResponseDebugInfo struct {
 	Headers    map[string]string
 	Body       string
 	Duration   time.Duration
+}
+
+// M4: BatchSelectRequest represents the request for batch goal selection
+type BatchSelectRequest struct {
+	GoalIDs         []string `json:"goal_ids"`
+	ReplaceExisting bool     `json:"replace_existing"`
+}
+
+// M4: BatchSelectResponse represents the response from batch goal selection
+type BatchSelectResponse struct {
+	SelectedGoals    []Goal   `json:"selectedGoals"`
+	ChallengeID      string   `json:"challengeId"`
+	TotalActiveGoals int32    `json:"totalActiveGoals"`
+	ReplacedGoals    []string `json:"replacedGoals"`
+}
+
+// M4: RandomSelectRequest represents the request for random goal selection
+type RandomSelectRequest struct {
+	Count           int  `json:"count"`
+	ReplaceExisting bool `json:"replace_existing"`
+	ExcludeActive   bool `json:"exclude_active"`
+}
+
+// M4: RandomSelectResponse represents the response from random goal selection
+type RandomSelectResponse struct {
+	SelectedGoals    []Goal   `json:"selectedGoals"`
+	ChallengeID      string   `json:"challengeId"`
+	TotalActiveGoals int32    `json:"totalActiveGoals"`
+	ReplacedGoals    []string `json:"replacedGoals"`
 }

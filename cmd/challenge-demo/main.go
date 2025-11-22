@@ -92,6 +92,10 @@ func main() {
 	rootCmd.AddCommand(commands.NewInitializeCommand())
 	rootCmd.AddCommand(commands.NewSetGoalActiveCommand())
 
+	// M4: Add batch and random goal selection commands
+	rootCmd.AddCommand(commands.NewBatchSelectCommand())
+	rootCmd.AddCommand(commands.NewRandomSelectCommand())
+
 	// Add reward verification commands
 	rootCmd.AddCommand(commands.NewVerifyEntitlementCommand())
 	rootCmd.AddCommand(commands.NewVerifyWalletCommand())

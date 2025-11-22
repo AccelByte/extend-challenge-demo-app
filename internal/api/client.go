@@ -28,6 +28,10 @@ type APIClient interface {
 	InitializePlayer(ctx context.Context) (*InitializeResponse, error)
 	SetGoalActive(ctx context.Context, challengeID, goalID string, isActive bool) (*SetGoalActiveResponse, error)
 
+	// M4 endpoints
+	BatchSelectGoals(ctx context.Context, challengeID string, req *BatchSelectRequest) (*BatchSelectResponse, error)
+	RandomSelectGoals(ctx context.Context, challengeID string, req *RandomSelectRequest) (*RandomSelectResponse, error)
+
 	// Debug
 	GetLastRequest() *RequestDebugInfo
 	GetLastResponse() *ResponseDebugInfo
@@ -182,6 +186,52 @@ func (c *HTTPAPIClient) SetGoalActive(ctx context.Context, challengeID, goalID s
 	}
 
 	var result SetGoalActiveResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// M4: BatchSelectGoals activates multiple goals at once
+func (c *HTTPAPIClient) BatchSelectGoals(ctx context.Context, challengeID string, req *BatchSelectRequest) (*BatchSelectResponse, error) {
+	path := fmt.Sprintf("/v1/challenges/%s/goals/batch-select", challengeID)
+	resp, err := c.doRequest(ctx, "POST", path, req)
+	if err != nil {
+		return nil, fmt.Errorf("batch select goals: %w", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if err := c.checkStatusCode(resp); err != nil {
+		return nil, err
+	}
+
+	var result BatchSelectResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// M4: RandomSelectGoals randomly activates N goals from a challenge
+func (c *HTTPAPIClient) RandomSelectGoals(ctx context.Context, challengeID string, req *RandomSelectRequest) (*RandomSelectResponse, error) {
+	path := fmt.Sprintf("/v1/challenges/%s/goals/random-select", challengeID)
+	resp, err := c.doRequest(ctx, "POST", path, req)
+	if err != nil {
+		return nil, fmt.Errorf("random select goals: %w", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if err := c.checkStatusCode(resp); err != nil {
+		return nil, err
+	}
+
+	var result RandomSelectResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
