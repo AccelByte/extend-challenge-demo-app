@@ -96,6 +96,9 @@ func main() {
 	rootCmd.AddCommand(commands.NewBatchSelectCommand())
 	rootCmd.AddCommand(commands.NewRandomSelectCommand())
 
+	// M5: Add rotation status command
+	rootCmd.AddCommand(commands.NewGetRotationStatusCommand())
+
 	// Add reward verification commands
 	rootCmd.AddCommand(commands.NewVerifyEntitlementCommand())
 	rootCmd.AddCommand(commands.NewVerifyWalletCommand())

@@ -363,7 +363,7 @@ func (m *EventSimulatorModel) triggerEventCmd() tea.Cmd {
 				}
 			}
 
-			err = m.eventTrigger.TriggerStatUpdate(ctx, m.userID, m.namespace, statCode, value)
+			err = m.eventTrigger.TriggerStatUpdate(ctx, m.userID, m.namespace, statCode, value, 0)
 		}
 
 		duration := time.Since(startTime)

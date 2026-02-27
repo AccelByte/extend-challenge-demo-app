@@ -119,10 +119,11 @@ func (t *LocalEventTrigger) TriggerLogin(ctx context.Context, userID, namespace 
 //   - namespace: AccelByte namespace
 //   - statCode: Stat code identifier (e.g., "kills", "headshots")
 //   - value: New stat value (absolute value, not increment)
+//   - inc: Increment value for this update (used for baseline calculation in relative progress mode)
 //
 // Returns:
 //   - error: Non-nil if event trigger failed
-func (t *LocalEventTrigger) TriggerStatUpdate(ctx context.Context, userID, namespace, statCode string, value int) error {
+func (t *LocalEventTrigger) TriggerStatUpdate(ctx context.Context, userID, namespace, statCode string, value, inc int) error {
 	if userID == "" {
 		return fmt.Errorf("userID cannot be empty")
 	}
@@ -136,7 +137,7 @@ func (t *LocalEventTrigger) TriggerStatUpdate(ctx context.Context, userID, names
 	}
 
 	// Construct StatItemUpdated message matching AGS event format
-	// Note: StatCode and LatestValue are in the Payload field
+	// Note: StatCode, LatestValue, and Inc are in the Payload field
 	msg := &statpb.StatItemUpdated{
 		Id:        generateEventID(),
 		UserId:    userID,
@@ -144,6 +145,7 @@ func (t *LocalEventTrigger) TriggerStatUpdate(ctx context.Context, userID, names
 		Payload: &statpb.StatItem{
 			StatCode:    statCode,
 			LatestValue: float64(value),
+			Inc:         float64(inc),
 		},
 	}
 

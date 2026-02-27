@@ -32,6 +32,9 @@ type APIClient interface {
 	BatchSelectGoals(ctx context.Context, challengeID string, req *BatchSelectRequest) (*BatchSelectResponse, error)
 	RandomSelectGoals(ctx context.Context, challengeID string, req *RandomSelectRequest) (*RandomSelectResponse, error)
 
+	// M5 endpoints
+	GetRotationStatus(ctx context.Context, challengeID string) (*RotationStatusResponse, error)
+
 	// Debug
 	GetLastRequest() *RequestDebugInfo
 	GetLastResponse() *ResponseDebugInfo
@@ -232,6 +235,29 @@ func (c *HTTPAPIClient) RandomSelectGoals(ctx context.Context, challengeID strin
 	}
 
 	var result RandomSelectResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// M5: GetRotationStatus retrieves the rotation status for a challenge
+func (c *HTTPAPIClient) GetRotationStatus(ctx context.Context, challengeID string) (*RotationStatusResponse, error) {
+	path := fmt.Sprintf("/v1/challenges/%s/rotation", challengeID)
+	resp, err := c.doRequest(ctx, "GET", path, nil)
+	if err != nil {
+		return nil, fmt.Errorf("get rotation status: %w", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if err := c.checkStatusCode(resp); err != nil {
+		return nil, err
+	}
+
+	var result RotationStatusResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}

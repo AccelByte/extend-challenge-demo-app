@@ -87,6 +87,7 @@ func newTriggerLoginCommand() *cobra.Command {
 func newTriggerStatUpdateCommand() *cobra.Command {
 	var statCode string
 	var value int
+	var inc int
 
 	cmd := &cobra.Command{
 		Use:   "stat-update",
@@ -110,7 +111,7 @@ func newTriggerStatUpdateCommand() *cobra.Command {
 			// Trigger event
 			ctx := context.Background()
 			start := time.Now()
-			err := container.EventTrigger.TriggerStatUpdate(ctx, userID, namespace, statCode, value)
+			err := container.EventTrigger.TriggerStatUpdate(ctx, userID, namespace, statCode, value, inc)
 			duration := time.Since(start)
 
 			// Format result
@@ -147,6 +148,7 @@ func newTriggerStatUpdateCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&statCode, "stat-code", "", "Statistic code (required)")
 	cmd.Flags().IntVar(&value, "value", 0, "New statistic value (required)")
+	cmd.Flags().IntVar(&inc, "inc", 0, "Increment value (for baseline calculation in relative progress mode)")
 	_ = cmd.MarkFlagRequired("stat-code")
 	_ = cmd.MarkFlagRequired("value")
 

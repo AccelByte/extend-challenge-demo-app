@@ -28,9 +28,11 @@ type Goal struct {
 	Progress    int32  `json:"progress"`    // Current progress value
 	Status      string `json:"status"`      // "not_started", "in_progress", "completed", "claimed"
 	Locked      bool   `json:"locked"`      // Whether goal is locked by prerequisites
-	CompletedAt string `json:"completedAt"` // RFC3339 timestamp or empty string (camelCase)
-	ClaimedAt   string `json:"claimedAt"`   // RFC3339 timestamp or empty string (camelCase)
-	IsActive    bool   `json:"isActive"`    // Whether goal is currently active (M3/M4 feature)
+	CompletedAt      string `json:"completedAt"`      // RFC3339 timestamp or empty string (camelCase)
+	ClaimedAt        string `json:"claimedAt"`        // RFC3339 timestamp or empty string (camelCase)
+	IsActive         bool   `json:"isActive"`         // Whether goal is currently active (M3/M4 feature)
+	ExpiresAt        string `json:"expiresAt"`        // RFC3339 timestamp for rotation expiry (M5)
+	ExpiresInSeconds int32  `json:"expiresInSeconds"` // Seconds until rotation expiry (M5)
 }
 
 // Requirement specifies what is needed to complete a goal
@@ -94,6 +96,28 @@ type SetGoalActiveResponse struct {
 	IsActive    bool   `json:"isActive"`
 	AssignedAt  string `json:"assignedAt"` // RFC3339 timestamp
 	Message     string `json:"message"`
+}
+
+// M5: RotationStatusResponse represents the response from the rotation status endpoint
+type RotationStatusResponse struct {
+	ChallengeID string        `json:"challengeId"`
+	Rotation    *RotationInfo `json:"rotation"`
+}
+
+// M5: RotationInfo contains rotation configuration and period info
+type RotationInfo struct {
+	Enabled       bool            `json:"enabled"`
+	Type          string          `json:"type"`
+	Schedule      string          `json:"schedule"`
+	CurrentPeriod *RotationPeriod `json:"currentPeriod"`
+	NextPeriod    *RotationPeriod `json:"nextPeriod"`
+}
+
+// M5: RotationPeriod represents a single rotation time period
+type RotationPeriod struct {
+	StartTime        string `json:"startTime"`
+	EndTime          string `json:"endTime"`
+	ExpiresInSeconds int32  `json:"expiresInSeconds"`
 }
 
 // RequestDebugInfo stores debug information about a request

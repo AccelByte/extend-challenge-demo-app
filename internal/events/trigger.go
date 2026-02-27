@@ -37,10 +37,11 @@ type EventTrigger interface {
 	//   - namespace: AccelByte namespace
 	//   - statCode: Stat code identifier (e.g., "kills", "headshots")
 	//   - value: New stat value (absolute value, not increment)
+	//   - inc: Increment value for this update (used for baseline calculation in relative progress mode)
 	//
 	// Returns:
 	//   - error: Non-nil if event trigger failed (connection, validation, processing)
-	TriggerStatUpdate(ctx context.Context, userID, namespace, statCode string, value int) error
+	TriggerStatUpdate(ctx context.Context, userID, namespace, statCode string, value, inc int) error
 
 	// Close cleans up resources (gRPC connection, Kafka writer).
 	//
